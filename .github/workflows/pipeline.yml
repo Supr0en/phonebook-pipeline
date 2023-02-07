@@ -17,6 +17,13 @@ jobs:
               run: npm install
             - name: lint
               run: npm run lint
+            - name: lint failed
+              uses: rjstone/discord-webhook-notify@v1
+              if: failure()
+              with:
+                  severity: error
+                  details: lint Failed!
+                  webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
             - name: heroku deploy
               if: ${{ github.event_name == 'push' }}
               uses: akhileshns/heroku-deploy@v3.12.12

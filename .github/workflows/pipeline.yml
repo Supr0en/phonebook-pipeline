@@ -1,0 +1,32 @@
+name: phonebook-pipeline
+
+on:
+    push:
+        -branches:
+            - main
+
+jobs:
+    deployment_pipeline:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '16'
+            - name: npm install
+              run: npm install
+            - name: npm start
+              run: npm start
+            - name: lint
+              run: npm run eslint
+            - name: heroku deploy
+              if: ${{ github.event_name == 'push' }}
+              uses: akhileshns/heroku-deploy@v3.12.12
+              with:
+                  heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+                  heroku_app_name: 'puhelinluettelo'
+                  heroku_email: 'erik.ruotsalainen1@gmail.com'
+                  delay: 5
+                  healthcheck: 'https://puhelinluettelo.herokuapp.com/health'
+                  checkstring: 'OK'
+                  rollbackonhealthcheckfailed: true

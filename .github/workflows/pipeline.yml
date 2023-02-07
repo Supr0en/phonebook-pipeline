@@ -15,10 +15,8 @@ jobs:
                   node-version: '16'
             - name: npm install
               run: npm install
-            - name: npm start
-              run: npm start
             - name: lint
-              run: npm run eslint
+              run: npm run lint
             - name: heroku deploy
               if: ${{ github.event_name == 'push' }}
               uses: akhileshns/heroku-deploy@v3.12.12

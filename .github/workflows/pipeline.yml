@@ -28,3 +28,21 @@ jobs:
                   healthcheck: 'https://puhelinluettelo.herokuapp.com/health'
                   checkstring: 'OK'
                   rollbackonhealthcheckfailed: true
+    tag_release:
+        needs: [deployment_pipeline]
+        runs-on: ubuntu-latest
+        steps:
+            - name: Bump version and push tag
+              if: ${{ github.event_name == 'push' }}
+              uses: anothrNick/github-tag-action@1.55.0
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  DEFAULT_BUMP: patch
+
+            - name: version success
+              uses: rjstone/discord-webhook-notify@v1
+              if: success()
+              with:
+                  severity: info
+                  details: version deploy succeeded!
+                  webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
